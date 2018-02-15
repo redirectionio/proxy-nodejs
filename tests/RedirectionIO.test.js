@@ -20,7 +20,7 @@ it('find redirect in express server when rule exist', done => {
 
     const app = {
         async use() {
-            const req = createRequest({path: 'foo'})
+            const req = createRequest({path: '/foo'})
             const res = { redirect(statusCode, location) { redirect(statusCode, location) }}
             
             const request = new Request(req.get('Host'), req.originalUrl, req.get('User-Agent'), req.get('Referer'))
@@ -42,7 +42,7 @@ it('find redirect in express server when rule exist', done => {
     function playTests() {
         expect(redirect.mock.calls.length).toBe(1)
         expect(redirect.mock.calls[0][0]).toBe(301)
-        expect(redirect.mock.calls[0][1]).toBe('http://host1.com/bar')
+        expect(redirect.mock.calls[0][1]).toBe('/bar')
         expect(next.mock.calls.length).toBe(0)
 
         done()
@@ -56,7 +56,7 @@ it('find nothing in express server when rule not exist', done => {
 
     const app = {
         async use() {
-            const req = createRequest({path: 'hello'})
+            const req = createRequest({path: '/hello'})
             const res = { redirect(statusCode, location) { redirect(statusCode, location) }}
             
             const request = new Request(req.get('Host'), req.originalUrl, req.get('User-Agent'), req.get('Referer'))
@@ -86,7 +86,7 @@ it('find nothing in express server when rule not exist', done => {
 it('find redirect in http server when rule exist', async () => {
     const writeHead = jest.fn()
 
-    const req = createRequest({path: 'foo'})
+    const req = createRequest({path: '/foo'})
     const res = { 
         writeHead(statusCode, location) { 
             writeHead(statusCode, location) 
@@ -100,7 +100,7 @@ it('find redirect in http server when rule exist', async () => {
 it('find nothing in http server when rule not exist', async () => {
     const writeHead = jest.fn()
 
-    const req = createRequest({path: 'hello'})
+    const req = createRequest({path: '/hello'})
     const res = { 
         writeHead(statusCode, location) { 
             writeHead(statusCode, location) 
@@ -125,7 +125,7 @@ it('find nothing in express server when agent is down', done => {
 
     const app = {
         async use() {
-            const req = createRequest({path: 'foo'})
+            const req = createRequest({path: '/foo'})
             const res = { redirect(statusCode, location) { redirect(statusCode, location) }}
             
             const request = new Request(req.get('Host'), req.originalUrl, req.get('User-Agent'), req.get('Referer'))
@@ -162,7 +162,7 @@ it('find nothing in express server when agent is down', async () => {
 
     const writeHead = jest.fn()
 
-    const req = createRequest({path: 'foo'})
+    const req = createRequest({path: '/foo'})
     const res = { 
         writeHead(statusCode, location) { 
             writeHead(statusCode, location) 

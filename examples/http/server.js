@@ -2,7 +2,7 @@ import { createServer } from 'http'
 import rio from 'redirectionio'
 import url from 'url'
 
-const port = 8003
+const port = 8002
 
 // configure redirection.io with your own agent informations
 const config = [
@@ -15,6 +15,11 @@ const config = [
         'name': 'fake_agent',
         'host': 'localhost',
         'port': 3100
+    },
+    {
+        'name': 'demo_agent',
+        'host': 'sdk_agent',
+        'port': 8000,
     }
 ]
 

@@ -2,7 +2,7 @@ import express from 'express'
 import rio from 'redirectionio'
 
 const app = express()
-const port = 8004
+const port = 8001
 
 // configure redirection.io with your own agent informations
 const config = [
@@ -15,6 +15,11 @@ const config = [
         'name': 'fake_agent',
         'host': 'localhost',
         'port': 3100
+    },
+    {
+        'name': 'demo_agent',
+        'host': 'sdk_agent',
+        'port': 8000,
     }
 ]
 

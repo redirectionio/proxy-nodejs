@@ -22,31 +22,31 @@ afterAll(() => {
 })
 
 it('find redirect when rule exist', async () => {
-    const request = createRequest({path: 'foo'})
+    const request = createRequest({path: '/foo'})
     const response = await client.findRedirect(request)
 
     expect(response).toBeInstanceOf(RedirectResponse)
     expect(response.statusCode).toBe(301)
-    expect(response.location).toBe('http://host1.com/bar')
+    expect(response.location).toBe('/bar')
 })
 
 it('find twice redirect when rule exist', async () => {
-    const request = createRequest({path: 'foo'})
+    const request = createRequest({path: '/foo'})
     let response = await client.findRedirect(request)
 
     expect(response).toBeInstanceOf(RedirectResponse)
     expect(response.statusCode).toBe(301)
-    expect(response.location).toBe('http://host1.com/bar')
+    expect(response.location).toBe('/bar')
 
     response = await client.findRedirect(request)
 
     expect(response).toBeInstanceOf(RedirectResponse)
     expect(response.statusCode).toBe(301)
-    expect(response.location).toBe('http://host1.com/bar')  
+    expect(response.location).toBe('/bar')  
 })
 
 it('find nothing when rule not exist', async () => {
-    const request = createRequest({path: 'hello'})
+    const request = createRequest({path: '/hello'})
     const response = await client.findRedirect(request)
 
     expect(response).toBeFalsy()
@@ -98,12 +98,12 @@ it('find redirect in multiple hosts array', async () => {
             {'name': 'fake_agent', 'host': 'localhost', 'port': 3100}
         ]
     )
-    const request = createRequest({path: 'foo'})
+    const request = createRequest({path: '/foo'})
     const response = await customClient.findRedirect(request)
 
     expect(response).toBeInstanceOf(RedirectResponse)
     expect(response.statusCode).toBe(301)
-    expect(response.location).toBe('http://host1.com/bar')
+    expect(response.location).toBe('/bar')
 })
 
 it('find nothing when agent goes down', async () => {
@@ -127,12 +127,12 @@ it('find nothing when agent goes down', async () => {
         ]
     )
 
-    const request = createRequest({path: 'foo'})
+    const request = createRequest({path: '/foo'})
     let response = await customClient.findRedirect(request)
 
     expect(response).toBeInstanceOf(RedirectResponse)
     expect(response.statusCode).toBe(301)
-    expect(response.location).toBe('http://host1.com/bar')
+    expect(response.location).toBe('/bar')
 
     process.kill(-customAgent.pid)
 
