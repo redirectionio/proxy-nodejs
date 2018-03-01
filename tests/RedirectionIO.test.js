@@ -4,10 +4,12 @@ import RedirectionIO from '../src/RedirectionIO'
 import Request from '../src/HttpMessage/Request'
 
 let agent = null
-const config = [{'name': 'fake_agent', 'host': '127.0.0.1', 'port': 3100}]
+const config = [{'name': 'fake_agent', 'host': '127.0.0.1', 'port': 3200}]
 
 beforeAll(done => {
-    agent = spawn('./node_modules/.bin/babel-node', [__dirname + '/../src/Resources/fake_agent.js'], {detached: true})
+    const env = Object.create(process.env)
+    env.RIO_PORT = 3200
+    agent = spawn('./node_modules/.bin/babel-node', [__dirname + '/../src/Resources/fake_agent.js'], {env: env, detached: true})
     agent.stdout.on('data', () => done())
 })
 

@@ -1,10 +1,11 @@
 {
   "name": "redirectionio",
   "version": "0.0.1",
-  "description": "redirection.io Node Module",
+  "description": "RedirectionIO Proxy for NodeJs",
   "main": "index.js",
   "scripts": {
     "test": "jest",
+    "code-coverage": "jest --coverage",
     "build": "babel src -d lib",
     "prepublish": "npm run build",
     "lint": "eslint ./; exit 0",
@@ -18,7 +19,7 @@
   },
   "author": {
     "name": "redirection.io team",
-    "email": "coucou@redirection.io",
+    "email": "support@redirection.io",
     "url": "https://redirection.io"
   },
   "contributors": [

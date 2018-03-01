@@ -1,0 +1,42 @@
+language: node_js
+
+sudo: false
+
+cache:
+    yarn: true
+    directories:
+        - node_modules
+
+node_js:
+    - 6
+    - 8
+    - node
+
+branches:
+    only:
+        - master
+
+env:
+    global:
+        - COMMAND="yarn test"
+
+matrix:
+    fast_finish: true
+    include:
+        - node_js: 6
+          env:
+            - COVERAGE=true
+            - COMMAND="yarn code-coverage"
+        - node_js: node
+          env:
+            - COMMAND="yarn lint"
+
+install:
+    - travis_retry yarn install --non-interactive
+
+script:
+    - travis_wait $COMMAND
+
+after_success:
+    - if [[ "$COVERAGE" = true ]]; then wget https://scrutinizer-ci.com/ocular.phar; fi
+    - if [[ "$COVERAGE" = true ]]; then php ocular.phar code-coverage:upload --format=php-clover coverage/clover.xml; fi
