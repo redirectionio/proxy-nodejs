@@ -1,5 +1,5 @@
 import { createServer } from 'http'
-import rio from 'redirectionio'
+import rio from '@redirectionio/proxy'
 import url from 'url'
 
 const port = 8002

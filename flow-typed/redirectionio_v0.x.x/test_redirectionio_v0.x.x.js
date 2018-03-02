@@ -2,7 +2,7 @@
 
 import express from 'express';
 import http from 'http';
-import rio, { Connection } from 'redirectionio';
+import rio, { Connection } from '@redirectionio/proxy';
 
 // Test `Connection` type
 const connection: Connection = {name: 'default', host: 'localhost', port: 3100};

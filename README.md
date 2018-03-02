@@ -1,5 +1,6 @@
 # RedirectionIO Proxy for NodeJs
 
+[![Latest Version](https://img.shields.io/github/release/redirectionio/proxy-nodejs.svg)](https://github.com/redirectionio/proxy-nodejs)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](LICENSE)
 [![Build Status](https://img.shields.io/travis/redirectionio/proxy-nodejs/master.svg)](https://travis-ci.org/redirectionio/proxy-nodejs)
 [![Code Coverage](https://img.shields.io/scrutinizer/coverage/g/redirectionio/proxy-nodejs.svg)](https://scrutinizer-ci.com/g/redirectionio/proxy-nodejs)
@@ -30,10 +31,10 @@ Drop us an email to `support@redirection.io` if you need help or have any questi
 
 ```console
 // with yarn
-$ yarn add redirectionio
+$ yarn add @redirectionio/proxy
 
 // with npm
-$ npm install --save redirectionio
+$ npm install --save @redirectionio/proxy
 ```
 
 2. By default, redirection.io will try to reach an agent listening on `127.0.0.1:20301`.
@@ -73,7 +74,7 @@ await rio.handleHttpRequest(req, res, config)
 
 ```js
 const http = require('http')
-const rio = require('redirectionio') // require the module
+const rio = require('@redirectionio/proxy') // require the module
 
 const port = YOUR_PORT
 
@@ -95,7 +96,7 @@ server.listen(port)
 
 ```js
 const app = require('express')()
-const rio = require('redirectionio') // require the module
+const rio = require('@redirectionio/proxy') // require the module
 
 const port = YOUR_PORT
 
@@ -120,32 +121,32 @@ app.listen(port)
 
 - Start http demo server on `localhost:8003`
 ```console
-$ npm run http
+$ yarn http
 ```
     
 - Start express demo server on `localhost:8004`
 ```console
-$ npm run express
+$ yarn express
 ```
 
 - Start both express and http demo servers
 ```console
-$ npm run start
+$ yarn start
 ```
 
 - List server(s)
 ```console
-$ npm run list
+$ yarn list
 ```
 
 - Restart server(s)
 ```console
-$ npm run restart
+$ yarn restart
 ```
 
 - Stop server(s)
 ```console
-$ npm run stop
+$ yarn stop
 ```
 
 ## Contribution
@@ -167,11 +168,11 @@ $ npm test
 ### Run linter
 
 ```console
-$ npm run lint
+$ yarn lint
 ```
 
 ### Transpile babel code
 
 ```console
-$ npm run build
+$ yarn build
 ```

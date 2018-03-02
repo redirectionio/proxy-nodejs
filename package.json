@@ -1,7 +1,7 @@
 {
-  "name": "redirectionio",
+  "name": "@redirectionio/proxy",
   "version": "0.0.1",
-  "description": "RedirectionIO Proxy for NodeJs",
+  "description": "RedirectionIO Proxy for NodeJs and Express",
   "main": "index.js",
   "scripts": {
     "test": "jest",
@@ -42,6 +42,6 @@
     "express": "^4.16.2",
     "jest": "^22.0.4",
     "pm2": "^2.9.3",
-    "redirectionio": "file:./"
+    "@redirectionio/proxy": "file:./"
   }
 }

@@ -1,5 +1,5 @@
 import express from 'express'
-import rio from 'redirectionio'
+import rio from '@redirectionio/proxy'
 
 const app = express()
 const port = 8001
@@ -19,7 +19,7 @@ const config = [
     {
         'name': 'demo_agent',
         'host': 'sdk_agent',
-        'port': 8000,
+        'port': 8000
     }
 ]
 

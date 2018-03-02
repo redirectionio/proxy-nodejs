@@ -1,7 +1,7 @@
 import type { IncomingMessage } from 'http';
 import type { Application } from 'express';
 
-declare module 'redirectionio' {
+declare module '@redirectionio/proxy' {
     declare type Connection = {
         name: string,
         host: string,
