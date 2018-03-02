@@ -119,12 +119,12 @@ app.listen(port)
 
 ### Available commands
 
-- Start http demo server on `localhost:8003`
+- Start http demo server on `localhost:8002`
 ```console
 $ yarn http
 ```
     
-- Start express demo server on `localhost:8004`
+- Start express demo server on `localhost:8001`
 ```console
 $ yarn express
 ```
@@ -156,13 +156,13 @@ Any contribution is welcome :) Thanks.
 ### Install dev dependencies
 
 ```console
-$ npm install
+$ yarn install
 ```
 
 ### Run tests
 
 ```console
-$ npm test
+$ yarn test
 ```
 
 ### Run linter

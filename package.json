@@ -1,6 +1,6 @@
 {
   "name": "@redirectionio/proxy",
-  "version": "0.0.1",
+  "version": "1.0.4",
   "description": "RedirectionIO Proxy for NodeJs and Express",
   "main": "index.js",
   "scripts": {
@@ -16,6 +16,10 @@
     "stop": "pm2 delete all",
     "list": "pm2 list",
     "agent": "pm2 start --interpreter `pwd`/node_modules/.bin/babel-node `pwd`/src/Resources/fake_agent.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/redirectionio/proxy-nodejs.git"
   },
   "author": {
     "name": "redirection.io team",
