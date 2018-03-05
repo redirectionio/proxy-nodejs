@@ -7,7 +7,7 @@ import NullLogger from './Logger/NullLogger'
 import RedirectResponse from './HttpMessage/RedirectResponse'
 
 export default class Client {
-    /** 
+    /**
      * @param array connections
      * @param int timeout
      * @param bool debug
@@ -17,7 +17,7 @@ export default class Client {
         if (!Array.isArray(connections)) {
             throw new BadConfigurationError('`connections` should be an array.')
         }
-        
+
         if (!connections.length) {
             throw new BadConfigurationError('At least one connection is required.')
         }
@@ -43,7 +43,7 @@ export default class Client {
         return connection
     }
 
-    /** 
+    /**
      * @param redirectionio.Request request
      */
     async findRedirect(request) {
@@ -52,6 +52,7 @@ export default class Client {
             'request_uri': request.path,
             'user_agent': request.userAgent,
             'referer': request.referer,
+            'scheme': request.scheme,
             'use_json': true
         }
 
@@ -63,20 +64,20 @@ export default class Client {
             if (this.debug) {
                 throw error
             }
-            
+
             return
         }
-    
+
         if (!response) {
             return
         }
-    
+
         response = JSON.parse(response)
-    
+
         return new RedirectResponse(response.location, Number(response.status_code))
     }
 
-    /** 
+    /**
      * @param redirectionio.Request request
      * @param redirectionio.Response response
      */
@@ -87,6 +88,7 @@ export default class Client {
             'request_uri': request.path,
             'user_agent': request.userAgent,
             'referer': request.referer,
+            'scheme': request.scheme,
             'use_json': true
         }
 
@@ -101,7 +103,7 @@ export default class Client {
         }
     }
 
-    /** 
+    /**
      * @param string command
      * @param object context
      */
@@ -159,7 +161,7 @@ export default class Client {
 
             try {
                 socket = await this.doConnect(connection)
-            } catch (error) {       
+            } catch (error) {
                 this.logger.debug('Impossible to connect to the connection.', {
                     'connection': connection,
                     'name': connectionName
@@ -178,7 +180,7 @@ export default class Client {
 
             this.currentConnection = socket
             this.currentConnectionName = connection.name
-            
+
             return socket
         }
 
@@ -189,13 +191,13 @@ export default class Client {
         throw new AgentNotFoundError()
     }
 
-    /** 
+    /**
      * @param string connection
      */
     doConnect(connection) {
         return new Promise((resolve, reject) => {
             const socket = connect(connection.port, connection.host)
-        
+
             socket
                 .on('connect', () => resolve(socket))
                 .on('error', error => reject(new ConnectionNotWorkingError(error.message)))
@@ -203,7 +205,7 @@ export default class Client {
         })
     }
 
-    /** 
+    /**
      * @param net.Socket socket
      * @param string content
      */
@@ -217,7 +219,7 @@ export default class Client {
         })
     }
 
-    /** 
+    /**
      * @param net.Socket socket
      */
     doGet(socket) {

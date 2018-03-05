@@ -10,7 +10,7 @@ export default class RedirectionIO {
             'port': 20301
         }
     ]
-    
+
     /**
      * @param express.app app
      */
@@ -22,9 +22,9 @@ export default class RedirectionIO {
         app.use(async (req, res, next) => {
             this.attachLogEvent(req, res)
 
-            const request = new Request(req.get('Host'), req.originalUrl, req.get('User-Agent'), req.get('Referer'))
+            const request = new Request(req.get('Host'), req.originalUrl, req.get('User-Agent'), req.get('Referer'), req.protocol)
             const response = await this.handleRequest(request)
-            
+
             if (response) {
                 res.redirect(response.statusCode, response.location)
             } else {
@@ -33,7 +33,7 @@ export default class RedirectionIO {
         })
     }
 
-    /** 
+    /**
      * @param http.IncomingMessage req
      * @param http.IncomingMessage res
      */
@@ -44,7 +44,8 @@ export default class RedirectionIO {
 
         this.attachLogEvent(req, res)
 
-        const request = new Request(req.headers['host'], req.url.split('?')[0], req.headers['user-agent'], req.headers['referer'])
+        const scheme = req.headers['x-forwarded-proto'] ? req.headers['x-forwarded-proto'] : 'http'
+        const request = new Request(req.headers['host'], req.url.split('?')[0], req.headers['user-agent'], scheme)
         const response = await this.handleRequest(request)
 
         if (response) {
@@ -56,9 +57,9 @@ export default class RedirectionIO {
         return false
     }
 
-    /** 
+    /**
      * Check if a redirection rule exists for a given `request`.
-     * 
+     *
      * @param redirectionio.Request request
      */
     static async handleRequest(request, connections = null) {
@@ -67,7 +68,7 @@ export default class RedirectionIO {
         }
 
         const client = new Client(this.connections, 10, false)
-        
+
         let response = null
 
         try {
@@ -81,14 +82,15 @@ export default class RedirectionIO {
 
     /**
      * Log a request/response couple.
-     * 
+     *
      * @param http.IncomingMessage req
      * @param http.ServerResponse res
      */
     static attachLogEvent(req, res) {
         req.on('end', async () => {
             const path = req.originalUrl ? req.originalUrl : req.url.split('?')[0]
-            const request = new Request(req.headers['host'], path, req.headers['user-agent'], req.headers['referer'])
+            const scheme = req.headers['x-forwarded-proto'] ? req.headers['x-forwarded-proto'] : 'http'
+            const request = new Request(req.headers['host'], path, req.headers['user-agent'], req.headers['referer'], scheme)
             const response = new Response(res.statusCode)
             const client = new Client(this.connections, 10, false)
 
