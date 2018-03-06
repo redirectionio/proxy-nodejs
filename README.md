@@ -1,4 +1,4 @@
-# RedirectionIO Proxy for NodeJs
+# redirection.io Proxy for Node.js
 
 [![Latest Version](https://img.shields.io/github/release/redirectionio/proxy-nodejs.svg)](https://github.com/redirectionio/proxy-nodejs)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](LICENSE)
@@ -8,16 +8,13 @@
 
 [![Email](https://img.shields.io/badge/email-support@redirection.io-blue.svg)](mailto:support@redirection.io)
 
-redirection.io NodeJs Proxy works in combination with [redirection.io](https://redirection.io).
+The redirection.io Proxy for Node.js works in combination with [redirection.io](https://redirection.io).
 
 If you don't know what is redirection.io, take the time to make a quick tour on the website.
 
 Before using it, you need:
-- a redirection.io account
-- a configured redirection.io agent on your server
-
-You don't have an account ? Please contact us [here](https://redirection.io/contact-us).
-You don't have an installed and configured agent ? Follow the [installation guide](https://redirection.io/documentation/developer-documentation/getting-started-installing-the-agent).
+- a redirection.io account. If you don't have an account, please [contact us here](https://redirection.io/contact-us).
+- a configured redirection.io agent on your server. Please follow the [installation guide](https://redirection.io/documentation/developer-documentation/installation-of-the-agent).
 
 Drop us an email to `support@redirection.io` if you need help or have any question.
 
@@ -78,12 +75,12 @@ const rio = require('@redirectionio/proxy') // require the module
 
 const port = YOUR_PORT
 
-// don't forget to pass an async function here 
+// don't forget to pass an async function here
 const server = http.createServer(async (req, res) => {
 
-    // wait here until we have a response from redirection.io 
+    // wait here until we have a response from redirection.io
     const redirect = await rio.handleHttpRequest(req, res)
-    
+
     if (!redirect) {
         // no redirection rule found, handle request here...
     }
@@ -123,7 +120,7 @@ app.listen(port)
 ```console
 $ yarn http
 ```
-    
+
 - Start express demo server on `localhost:8001`
 ```console
 $ yarn express
