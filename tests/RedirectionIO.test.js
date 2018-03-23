@@ -19,19 +19,32 @@ it('find redirect in express server when rule exist', done => {
     // Mocks all needed functions/objects
     const next = jest.fn()
     const redirect = jest.fn()
+    const sendStatus = jest.fn()
+    const requests = ['/foo', '/garply']
 
     const app = {
         async use() {
-            const req = createRequest({path: '/foo'})
-            const res = { redirect(statusCode, location) { redirect(statusCode, location) }}
-            
-            const request = new Request(req.get('Host'), req.originalUrl, req.get('User-Agent'), req.get('Referer'))
-            const response = await RedirectionIO.handleRequest(request, config)
-            
-            if (response) {
-                res.redirect(response.statusCode, response.location)
-            } else {
-                next()
+            for (let i = 0; i < requests.length; ++i) {
+                const req = createRequest({path: requests[i]})
+                const res = {
+                    redirect(statusCode, location) {
+                        redirect(statusCode, location)
+                    },
+                    sendStatus(statusCode) {
+                        sendStatus(statusCode)
+                    }
+                }
+
+                const request = new Request(req.get('Host'), req.originalUrl, req.get('User-Agent'), req.get('Referer'))
+                const response = await RedirectionIO.handleRequest(request, config)
+
+                if (response) {
+                    response.statusCode == 410
+                        ? res.sendStatus(410)
+                        : res.redirect(response.statusCode, response.location)
+                } else {
+                    next()
+                }
             }
             playTests()
         }
@@ -45,6 +58,10 @@ it('find redirect in express server when rule exist', done => {
         expect(redirect.mock.calls.length).toBe(1)
         expect(redirect.mock.calls[0][0]).toBe(301)
         expect(redirect.mock.calls[0][1]).toBe('/bar')
+
+        expect(sendStatus.mock.calls.length).toBe(1)
+        expect(sendStatus.mock.calls[0][0]).toBe(410)
+
         expect(next.mock.calls.length).toBe(0)
 
         done()
@@ -60,10 +77,10 @@ it('find nothing in express server when rule not exist', done => {
         async use() {
             const req = createRequest({path: '/hello'})
             const res = { redirect(statusCode, location) { redirect(statusCode, location) }}
-            
+
             const request = new Request(req.get('Host'), req.originalUrl, req.get('User-Agent'), req.get('Referer'))
             const response = await RedirectionIO.handleRequest(request, config)
-            
+
             if (response) {
                 res.redirect(response.statusCode, response.location)
             } else {
@@ -89,13 +106,13 @@ it('find redirect in http server when rule exist', async () => {
     const writeHead = jest.fn()
 
     const req = createRequest({path: '/foo'})
-    const res = { 
-        writeHead(statusCode, location) { 
-            writeHead(statusCode, location) 
+    const res = {
+        writeHead(statusCode, location) {
+            writeHead(statusCode, location)
         },
         end() {}
     }
-    
+
     await expect(RedirectionIO.handleHttpRequest(req, res, config)).resolves.toBeTruthy()
 })
 
@@ -103,20 +120,20 @@ it('find nothing in http server when rule not exist', async () => {
     const writeHead = jest.fn()
 
     const req = createRequest({path: '/hello'})
-    const res = { 
-        writeHead(statusCode, location) { 
-            writeHead(statusCode, location) 
+    const res = {
+        writeHead(statusCode, location) {
+            writeHead(statusCode, location)
         },
         end() {}
     }
-    
+
     await expect(RedirectionIO.handleHttpRequest(req, res, config)).resolves.toBeFalsy()
 })
 
 // Warning: Should be the last tests because they kill the fake_agent
 it('find nothing in express server when agent is down', done => {
-    try { 
-        process.kill(-agent.pid) 
+    try {
+        process.kill(-agent.pid)
     } catch (error) {
         // do nothing
     }
@@ -129,10 +146,10 @@ it('find nothing in express server when agent is down', done => {
         async use() {
             const req = createRequest({path: '/foo'})
             const res = { redirect(statusCode, location) { redirect(statusCode, location) }}
-            
+
             const request = new Request(req.get('Host'), req.originalUrl, req.get('User-Agent'), req.get('Referer'))
             const response = await RedirectionIO.handleRequest(request, config)
-            
+
             if (response) {
                 res.redirect(response.statusCode, response.location)
             } else {
@@ -156,8 +173,8 @@ it('find nothing in express server when agent is down', done => {
 
 // Warning: Should be the last tests because they kill the fake_agent
 it('find nothing in express server when agent is down', async () => {
-    try { 
-        process.kill(-agent.pid) 
+    try {
+        process.kill(-agent.pid)
     } catch (error) {
         // do nothing
     }
@@ -165,22 +182,22 @@ it('find nothing in express server when agent is down', async () => {
     const writeHead = jest.fn()
 
     const req = createRequest({path: '/foo'})
-    const res = { 
-        writeHead(statusCode, location) { 
-            writeHead(statusCode, location) 
+    const res = {
+        writeHead(statusCode, location) {
+            writeHead(statusCode, location)
         },
         end() {}
     }
-    
+
     await expect(RedirectionIO.handleHttpRequest(req, res, config)).resolves.toBeFalsy()
 })
 
-function createRequest(options = {}) {  
+function createRequest(options = {}) {
     const host = options.hasOwnProperty('host') ? options.host : 'host1.com'
     const path = options.hasOwnProperty('path') ? options.path : ''
     const userAgent = options.hasOwnProperty('userAgent') ? options.userAgent : 'redirection-io-client/0.0.1'
     const referer = options.hasOwnProperty('referer') ? options.referer : 'host0.com'
-    
+
     return {
         originalUrl: path,
         url: path,

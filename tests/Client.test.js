@@ -13,7 +13,7 @@ let client = null
 beforeAll(done => {
     agent = spawn('./node_modules/.bin/babel-node', [__dirname + '/../src/Resources/fake_agent.js'], {detached: true})
     agent.stdout.on('data', () => done())
-    
+
     client = new Client([{'name': 'fake_agent', 'host': 'localhost', 'port': 3100}])
 })
 
@@ -30,6 +30,14 @@ it('find redirect when rule exist', async () => {
     expect(response.location).toBe('/bar')
 })
 
+it('send 410 response when rule exist', async () => {
+    const request = createRequest({path: '/garply'})
+    const response = await client.findRedirect(request)
+
+    expect(response).toBeInstanceOf(Response)
+    expect(response.statusCode).toBe(410)
+})
+
 it('find twice redirect when rule exist', async () => {
     const request = createRequest({path: '/foo'})
     let response = await client.findRedirect(request)
@@ -42,7 +50,7 @@ it('find twice redirect when rule exist', async () => {
 
     expect(response).toBeInstanceOf(RedirectResponse)
     expect(response.statusCode).toBe(301)
-    expect(response.location).toBe('/bar')  
+    expect(response.location).toBe('/bar')
 })
 
 it('find nothing when rule not exist', async () => {
@@ -63,7 +71,7 @@ it('find nothing when agent is down', async () => {
 it('fail when agent is down and debug enabled', async () => {
     const brokenClient = new Client([{'name': 'broken_agent', 'host': 'unknown-host', 'port': 80}], 10, true)
     const request = createRequest()
-    
+
     await expect(brokenClient.findRedirect(request)).rejects.toThrow(AgentNotFoundError.message)
 })
 

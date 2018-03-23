@@ -2,5 +2,6 @@
     ["/foo", "/bar", 301],
     ["/baz", "/qux", 302],
     ["/quux", "/corge", 307],
-    ["/uier", "/grault", 308]
+    ["/uier", "/grault", 308],
+    ["/garply", "", 410]
 ]

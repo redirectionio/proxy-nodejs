@@ -5,6 +5,7 @@ import BadConfigurationError from './Error/BadConfigurationError'
 import ConnectionNotWorkingError from './Error/ConnectionNotWorkingError'
 import NullLogger from './Logger/NullLogger'
 import RedirectResponse from './HttpMessage/RedirectResponse'
+import Response from './HttpMessage/Response'
 
 export default class Client {
     /**
@@ -74,7 +75,9 @@ export default class Client {
 
         response = JSON.parse(response)
 
-        return new RedirectResponse(response.location, Number(response.status_code))
+        return response.status_code == 410
+            ? new Response(410)
+            : new RedirectResponse(response.location, Number(response.status_code))
     }
 
     /**
