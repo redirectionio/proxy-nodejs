@@ -26,7 +26,7 @@ const config = [
 const server = createServer(async (req, res) => {
 
     const redirect = await rio.handleHttpRequest(req, res, config)
-    
+
     if (!redirect) {
         const path = url.parse(req.url).pathname
 

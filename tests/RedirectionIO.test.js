@@ -39,7 +39,7 @@ it('find redirect in express server when rule exist', done => {
                 const response = await RedirectionIO.handleRequest(request, config)
 
                 if (response) {
-                    response.statusCode == 410
+                    response.statusCode === 410
                         ? res.sendStatus(410)
                         : res.redirect(response.statusCode, response.location)
                 } else {

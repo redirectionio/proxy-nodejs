@@ -27,8 +27,8 @@ export default class RedirectionIO {
 
             if (!response) return next()
 
-            response.statusCode == 410
-                ? res.sendStatus(410)
+            response.statusCode === 410
+                ? res.status(410).send()
                 : res.redirect(response.statusCode, response.location)
         })
     }
@@ -50,7 +50,7 @@ export default class RedirectionIO {
 
         if (!response) return false
 
-        response.statusCode == 410
+        response.statusCode === 410
             ? res.writeHead(410)
             : res.writeHead(response.statusCode, {Location: response.location})
 

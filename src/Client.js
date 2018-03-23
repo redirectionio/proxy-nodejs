@@ -75,7 +75,7 @@ export default class Client {
 
         response = JSON.parse(response)
 
-        return response.status_code == 410
+        return response.status_code === 410
             ? new Response(410)
             : new RedirectResponse(response.location, Number(response.status_code))
     }

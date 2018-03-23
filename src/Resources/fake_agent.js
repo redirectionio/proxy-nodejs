@@ -22,7 +22,7 @@ const server = createServer(connection => {
         .on('data', data => {
             let request = data.toString().trim().replace(/\n$/, '')
             const command = request.substring(0, request.indexOf(' '))
-            
+
             try {
                 request = JSON.parse(request.replace(command, ''))
             } catch (error) {
@@ -51,6 +51,6 @@ const server = createServer(connection => {
         })
 })
 
-server.listen(port, () => { 
-    console.log(`Fake agent started on tcp://${ip}:${port}`) 
+server.listen(port, () => {
+    console.log(`Fake agent started on tcp://${ip}:${port}`)
 })
