@@ -30,6 +30,7 @@
             "error",
             "never"
         ],
-        "no-console": "off"
+        "no-console": "off",
+        "curly": "error"
     }
 }

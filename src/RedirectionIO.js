@@ -25,7 +25,9 @@ export default class RedirectionIO {
             const request = new Request(req.get('Host'), req.originalUrl, req.get('User-Agent'), req.get('Referer'), req.protocol)
             const response = await this.handleRequest(request)
 
-            if (!response) return next()
+            if (!response) {
+                return next()
+            }
 
             response.statusCode === 410
                 ? res.status(410).send()
@@ -48,7 +50,9 @@ export default class RedirectionIO {
         const request = new Request(req.headers['host'], req.url.split('?')[0], req.headers['user-agent'], scheme)
         const response = await this.handleRequest(request)
 
-        if (!response) return false
+        if (!response) {
+            return false
+        }
 
         response.statusCode === 410
             ? res.writeHead(410)
