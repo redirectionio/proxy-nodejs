@@ -1,6 +1,6 @@
 {
   "name": "@redirectionio/proxy",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "RedirectionIO Proxy for NodeJs and Express",
   "main": "index.js",
   "scripts": {
