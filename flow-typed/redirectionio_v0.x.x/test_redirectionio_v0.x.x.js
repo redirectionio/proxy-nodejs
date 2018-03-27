@@ -5,11 +5,7 @@ import http from 'http';
 import rio, { Connection } from '@redirectionio/proxy';
 
 // Test `Connection` type
-const connection: Connection = {name: 'default', host: 'localhost', port: 3100};
-// $ExpectError
-const _connection: Connection = {name: 'default', host: 'localhost', port: '3100'};
-// $ExpectError
-const _connection2: Connection = {name: 'default', host: 'localhost'};
+const connection: Connection = { default: 'tcp://localhost:3100' };
 
 // Test `handleExpressRequest()` method
 const app: express$Application = express();

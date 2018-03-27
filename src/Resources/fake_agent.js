@@ -36,7 +36,7 @@ const server = createServer(connection => {
                         connection.write(
                             JSON.stringify({
                                 status_code: redirection[2],
-                                location: redirection[1]
+                                location: redirection[1],
                             })
                         )
                         return

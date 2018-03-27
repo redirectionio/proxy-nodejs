@@ -11,10 +11,10 @@ let agent = null
 let client = null
 
 beforeAll(done => {
-    agent = spawn('./node_modules/.bin/babel-node', [__dirname + '/../src/Resources/fake_agent.js'], {detached: true})
+    agent = spawn('./node_modules/.bin/babel-node', [__dirname + '/../src/Resources/fake_agent.js'], { detached: true })
     agent.stdout.on('data', () => done())
 
-    client = new Client([{'name': 'fake_agent', 'host': 'localhost', 'port': 3100}])
+    client = new Client({ 'fake_agent': 'tcp://localhost:3100' })
 })
 
 afterAll(() => {
@@ -22,7 +22,7 @@ afterAll(() => {
 })
 
 it('find redirect when rule exist', async () => {
-    const request = createRequest({path: '/foo'})
+    const request = createRequest({ path: '/foo' })
     const response = await client.findRedirect(request)
 
     expect(response).toBeInstanceOf(RedirectResponse)
@@ -31,7 +31,7 @@ it('find redirect when rule exist', async () => {
 })
 
 it('send 410 response when rule exist', async () => {
-    const request = createRequest({path: '/garply'})
+    const request = createRequest({ path: '/garply' })
     const response = await client.findRedirect(request)
 
     expect(response).toBeInstanceOf(Response)
@@ -39,7 +39,7 @@ it('send 410 response when rule exist', async () => {
 })
 
 it('find twice redirect when rule exist', async () => {
-    const request = createRequest({path: '/foo'})
+    const request = createRequest({ path: '/foo' })
     let response = await client.findRedirect(request)
 
     expect(response).toBeInstanceOf(RedirectResponse)
@@ -54,14 +54,14 @@ it('find twice redirect when rule exist', async () => {
 })
 
 it('find nothing when rule not exist', async () => {
-    const request = createRequest({path: '/hello'})
+    const request = createRequest({ path: '/hello' })
     const response = await client.findRedirect(request)
 
     expect(response).toBeFalsy()
 })
 
 it('find nothing when agent is down', async () => {
-    const brokenClient = new Client([{'name': 'broken_agent', 'host': 'unknown-host', 'port': 80}])
+    const brokenClient = new Client({ 'broken_agent': 'tcp://unknown-host:80' })
     const request = createRequest()
     const response = await brokenClient.findRedirect(request)
 
@@ -69,7 +69,7 @@ it('find nothing when agent is down', async () => {
 })
 
 it('fail when agent is down and debug enabled', async () => {
-    const brokenClient = new Client([{'name': 'broken_agent', 'host': 'unknown-host', 'port': 80}], 10, true)
+    const brokenClient = new Client({ 'broken_agent': 'tcp://unknown-host:80' }, 10, true)
     const request = createRequest()
 
     await expect(brokenClient.findRedirect(request)).rejects.toThrow(AgentNotFoundError.message)
@@ -83,7 +83,7 @@ it('log redirection', async () => {
 })
 
 it('log nothing when agent is down', async () => {
-    const brokenClient = new Client([{'name': 'broken_agent', 'host': 'unknown-host', 'port': 80}])
+    const brokenClient = new Client({ 'broken_agent': 'tcp://unknown-host:80' })
     const request = createRequest()
     const response = new Response()
 
@@ -91,7 +91,7 @@ it('log nothing when agent is down', async () => {
 })
 
 it('fail logging when agent is down and debug enabled', async () => {
-    const brokenClient = new Client([{'name': 'broken_agent', 'host': 'unknown-host', 'port': 80}], 10, true)
+    const brokenClient = new Client({ 'broken_agent': 'tcp://unknown-host:80' }, 10, true)
     const request = createRequest()
     const response = new Response()
 
@@ -99,14 +99,12 @@ it('fail logging when agent is down and debug enabled', async () => {
 })
 
 it('find redirect in multiple hosts array', async () => {
-    const customClient = new Client(
-        [
-            {'name': 'broken_agent', 'host': 'unknown-host', 'port': 80},
-            {'name': 'broken_agent', 'host': 'unknown-host', 'port': 81},
-            {'name': 'fake_agent', 'host': 'localhost', 'port': 3100}
-        ]
-    )
-    const request = createRequest({path: '/foo'})
+    const customClient = new Client({
+        'broken_agent_1': 'tcp://unknown-host:80',
+        'broken_agent_2': 'tcp://unknown-host:81',
+        'fake_agent': 'tcp://localhost:3100',
+    })
+    const request = createRequest({ path: '/foo' })
     const response = await customClient.findRedirect(request)
 
     expect(response).toBeInstanceOf(RedirectResponse)
@@ -121,21 +119,19 @@ it('find nothing when agent goes down', async () => {
         return new Promise(resolve => {
             const env = Object.create(process.env)
             env.RIO_PORT = 3101
-            customAgent = spawn('./node_modules/.bin/babel-node', [__dirname + '/../src/Resources/fake_agent.js'], {env: env, detached: true})
+            customAgent = spawn('./node_modules/.bin/babel-node', [__dirname + '/../src/Resources/fake_agent.js'], { env: env, detached: true })
             customAgent.stdout.on('data', () => resolve())
             customAgent.stderr.on('data', data => console.log(data.toString()))
         })
     })()
 
-    const customClient = new Client(
-        [
-            {'name': 'broken_agent', 'host': 'unknown-host', 'port': 80},
-            {'name': 'broken_agent', 'host': 'unknown-host', 'port': 81},
-            {'name': 'fake_agent', 'host': 'localhost', 'port': 3101}
-        ]
-    )
+    const customClient = new Client({
+        'broken_agent_1': 'tcp://unknown-host:80',
+        'broken_agent_2': 'tcp://unknown-host:81',
+        'fake_agent': 'tcp://localhost:3101',
+    })
 
-    const request = createRequest({path: '/foo'})
+    const request = createRequest({ path: '/foo' })
     let response = await customClient.findRedirect(request)
 
     expect(response).toBeInstanceOf(RedirectResponse)

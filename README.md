@@ -1,13 +1,5 @@
 # redirection.io Proxy for Node.js
 
-[![Latest Version](https://img.shields.io/github/release/redirectionio/proxy-nodejs.svg)](https://github.com/redirectionio/proxy-nodejs)
-[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](LICENSE)
-[![Build Status](https://img.shields.io/travis/redirectionio/proxy-nodejs/master.svg)](https://travis-ci.org/redirectionio/proxy-nodejs)
-[![Code Coverage](https://img.shields.io/scrutinizer/coverage/g/redirectionio/proxy-nodejs.svg)](https://scrutinizer-ci.com/g/redirectionio/proxy-nodejs)
-[![Quality Score](https://img.shields.io/scrutinizer/g/redirectionio/proxy-nodejs.svg)](https://scrutinizer-ci.com/g/redirectionio/proxy-nodejs)
-
-[![Email](https://img.shields.io/badge/email-support@redirection.io-blue.svg)](mailto:support@redirection.io)
-
 The redirection.io Proxy for Node.js works in combination with [redirection.io](https://redirection.io).
 
 If you don't know what is redirection.io, take the time to make a quick tour on the website.
@@ -34,27 +26,15 @@ $ yarn add @redirectionio/proxy
 $ npm install --save @redirectionio/proxy
 ```
 
-2. By default, redirection.io will try to reach an agent listening on `127.0.0.1:20301`.
-```js
-connections: [
-    {
-        'name': 'default',
-        'host': '127.0.0.1',
-        'port': 20301
-    }
-]
-```
+2. By default, redirection.io will try to reach an agent listening on `tcp://127.0.0.1:20301`.
 
-3. If you need to configure redirection.io to use your personal agent informations, pass an array of connections as last argument:
+3. If you need to configure redirection.io to use your personal agent informations, pass a dictionary of connections as last argument:
 ```js
-const config = [
-    {
-        'name': 'real_agent',
-        'host': '192.168.64.2',
-        'port': 20301
-    },
+const config = {
+    agent_tcp: 'tcp://127.0.0.1:20301',
+    agent_unix: 'unix:///var/run/redirectionio_agent.sock',
     // ...
-]
+}
 
 // Express
 rio.handleExpressRequest(app, config)

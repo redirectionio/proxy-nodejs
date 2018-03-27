@@ -6,7 +6,7 @@
   "scripts": {
     "test": "jest",
     "code-coverage": "jest --coverage",
-    "build": "babel src -d lib",
+    "build": "babel src -d lib --copy-files",
     "prepublish": "npm run build",
     "lint": "eslint ./; exit 0",
     "start": "npm run http && npm run express",

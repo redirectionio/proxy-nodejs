@@ -4,12 +4,12 @@ import RedirectionIO from '../src/RedirectionIO'
 import Request from '../src/HttpMessage/Request'
 
 let agent = null
-const config = [{'name': 'fake_agent', 'host': '127.0.0.1', 'port': 3200}]
+const config = { 'fake_agent': 'tcp://127.0.0.1:3200' }
 
 beforeAll(done => {
     const env = Object.create(process.env)
     env.RIO_PORT = 3200
-    agent = spawn('./node_modules/.bin/babel-node', [__dirname + '/../src/Resources/fake_agent.js'], {env: env, detached: true})
+    agent = spawn('./node_modules/.bin/babel-node', [__dirname + '/../src/Resources/fake_agent.js'], { env: env, detached: true })
     agent.stdout.on('data', () => done())
 })
 
@@ -25,14 +25,14 @@ it('find redirect in express server when rule exist', done => {
     const app = {
         async use() {
             for (let i = 0; i < requests.length; ++i) {
-                const req = createRequest({path: requests[i]})
+                const req = createRequest({ path: requests[i] })
                 const res = {
                     redirect(statusCode, location) {
                         redirect(statusCode, location)
                     },
                     sendStatus(statusCode) {
                         sendStatus(statusCode)
-                    }
+                    },
                 }
 
                 const request = new Request(req.get('Host'), req.originalUrl, req.get('User-Agent'), req.get('Referer'))
@@ -47,7 +47,7 @@ it('find redirect in express server when rule exist', done => {
                 }
             }
             playTests()
-        }
+        },
     }
 
     // Run redirection.io
@@ -75,8 +75,8 @@ it('find nothing in express server when rule not exist', done => {
 
     const app = {
         async use() {
-            const req = createRequest({path: '/hello'})
-            const res = { redirect(statusCode, location) { redirect(statusCode, location) }}
+            const req = createRequest({ path: '/hello' })
+            const res = { redirect(statusCode, location) { redirect(statusCode, location) } }
 
             const request = new Request(req.get('Host'), req.originalUrl, req.get('User-Agent'), req.get('Referer'))
             const response = await RedirectionIO.handleRequest(request, config)
@@ -87,7 +87,7 @@ it('find nothing in express server when rule not exist', done => {
                 next()
             }
             playTests()
-        }
+        },
     }
 
     // Run redirection.io
@@ -105,12 +105,12 @@ it('find nothing in express server when rule not exist', done => {
 it('find redirect in http server when rule exist', async () => {
     const writeHead = jest.fn()
 
-    const req = createRequest({path: '/foo'})
+    const req = createRequest({ path: '/foo' })
     const res = {
         writeHead(statusCode, location) {
             writeHead(statusCode, location)
         },
-        end() {}
+        end() {},
     }
 
     await expect(RedirectionIO.handleHttpRequest(req, res, config)).resolves.toBeTruthy()
@@ -119,12 +119,12 @@ it('find redirect in http server when rule exist', async () => {
 it('find nothing in http server when rule not exist', async () => {
     const writeHead = jest.fn()
 
-    const req = createRequest({path: '/hello'})
+    const req = createRequest({ path: '/hello' })
     const res = {
         writeHead(statusCode, location) {
             writeHead(statusCode, location)
         },
-        end() {}
+        end() {},
     }
 
     await expect(RedirectionIO.handleHttpRequest(req, res, config)).resolves.toBeFalsy()
@@ -144,8 +144,8 @@ it('find nothing in express server when agent is down', done => {
 
     const app = {
         async use() {
-            const req = createRequest({path: '/foo'})
-            const res = { redirect(statusCode, location) { redirect(statusCode, location) }}
+            const req = createRequest({ path: '/foo' })
+            const res = { redirect(statusCode, location) { redirect(statusCode, location) } }
 
             const request = new Request(req.get('Host'), req.originalUrl, req.get('User-Agent'), req.get('Referer'))
             const response = await RedirectionIO.handleRequest(request, config)
@@ -156,7 +156,7 @@ it('find nothing in express server when agent is down', done => {
                 next()
             }
             playTests()
-        }
+        },
     }
 
     // Run redirection.io
@@ -181,12 +181,12 @@ it('find nothing in express server when agent is down', async () => {
 
     const writeHead = jest.fn()
 
-    const req = createRequest({path: '/foo'})
+    const req = createRequest({ path: '/foo' })
     const res = {
         writeHead(statusCode, location) {
             writeHead(statusCode, location)
         },
-        end() {}
+        end() {},
     }
 
     await expect(RedirectionIO.handleHttpRequest(req, res, config)).resolves.toBeFalsy()
@@ -204,11 +204,11 @@ function createRequest(options = {}) {
         headers: {
             'host': host,
             'user-agent': userAgent,
-            'referer': referer
+            'referer': referer,
         },
         get(header) {
             return this.headers[header.toLowerCase()]
         },
-        on() {}
+        on() {},
     }
 }

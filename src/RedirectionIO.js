@@ -3,13 +3,7 @@ import Request from './HttpMessage/Request'
 import Response from './HttpMessage/Response'
 
 export default class RedirectionIO {
-    static connections = [
-        {
-            'name': 'default',
-            'host': '127.0.0.1',
-            'port': 20301
-        }
-    ]
+    static connections = { default: 'tcp://127.0.0.1:20301' }
 
     /**
      * @param express.app app
@@ -56,7 +50,7 @@ export default class RedirectionIO {
 
         response.statusCode === 410
             ? res.writeHead(410)
-            : res.writeHead(response.statusCode, {Location: response.location})
+            : res.writeHead(response.statusCode, { Location: response.location })
 
         res.end()
         return true

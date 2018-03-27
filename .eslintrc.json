@@ -31,6 +31,14 @@
             "never"
         ],
         "no-console": "off",
-        "curly": "error"
+        "curly": "error",
+        "comma-dangle": [
+            "error",
+            "always-multiline"
+        ],
+        "object-curly-spacing": [
+            "error",
+            "always"
+        ]
     }
 }

@@ -9,24 +9,28 @@ import Response from './HttpMessage/Response'
 
 export default class Client {
     /**
-     * @param array connections
+     * @param object connections
      * @param int timeout
      * @param bool debug
      * @param redirectionio.AbstractLogger logger
      */
     constructor(connections, timeout = 10, debug = false, logger = null) {
-        if (!Array.isArray(connections)) {
-            throw new BadConfigurationError('`connections` should be an array.')
+        if (connections !== Object(connections) || Object.prototype.toString.call(connections) === '[object Array]') {
+            throw new BadConfigurationError('`connections` should be a valid dictionary.')
         }
 
-        if (!connections.length) {
+        if (!Object.keys(connections).length) {
             throw new BadConfigurationError('At least one connection is required.')
         }
 
         this.connections = []
 
-        for (const connection of connections) {
-            this.connections[connection.name] = this.resolveConnection(connection)
+        for (const connectionName in connections) {
+            if (connections.hasOwnProperty(connectionName)) {
+                this.connections[connectionName] = this.resolveConnection({
+                    remote_socket: connections[connectionName],
+                })
+            }
         }
 
         this.timeout = timeout
@@ -35,8 +39,8 @@ export default class Client {
     }
 
     resolveConnection(connection) {
-        if (!connection.hasOwnProperty('name') || !connection.hasOwnProperty('host') || !connection.hasOwnProperty('port')) {
-            throw new BadConfigurationError('A connection should have `name`, `host` and `port` properties.')
+        if (!connection.hasOwnProperty('remote_socket') || !connection.remote_socket) {
+            throw new BadConfigurationError('Connection should have a valid remote socket.')
         }
 
         connection.retries = 2
@@ -54,7 +58,7 @@ export default class Client {
             'user_agent': request.userAgent,
             'referer': request.referer,
             'scheme': request.scheme,
-            'use_json': true
+            'use_json': true,
         }
 
         let response = null
@@ -92,7 +96,7 @@ export default class Client {
             'user_agent': request.userAgent,
             'referer': request.referer,
             'scheme': request.scheme,
-            'use_json': true
+            'use_json': true,
         }
 
         try {
@@ -132,7 +136,7 @@ export default class Client {
             response = await this.doGet(socket)
         } catch (error) {
             this.logger.debug('Impossible to send/get data with this connection', {
-                'connection': this.connections[this.currentConnectionName]
+                'connection': this.connections[this.currentConnectionName],
             })
 
             --this.connections[this.currentConnectionName].retries
@@ -157,7 +161,7 @@ export default class Client {
 
             this.logger.debug('New connection chosen. Trying to connect.', {
                 'connection': connection,
-                'name': connectionName
+                'name': connectionName,
             })
 
             let socket = null
@@ -167,7 +171,7 @@ export default class Client {
             } catch (error) {
                 this.logger.debug('Impossible to connect to the connection.', {
                     'connection': connection,
-                    'name': connectionName
+                    'name': connectionName,
                 })
 
                 connection.retries = 0
@@ -176,19 +180,19 @@ export default class Client {
 
             this.logger.debug('New connection approved.', {
                 'connection': connection,
-                'name': connectionName
+                'name': connectionName,
             })
 
             socket.setTimeout(this.timeout)
 
             this.currentConnection = socket
-            this.currentConnectionName = connection.name
+            this.currentConnectionName = connectionName
 
             return socket
         }
 
         this.logger.error('Can not find an agent.', {
-            'connections': this.connections
+            'connections': this.connections,
         })
 
         throw new AgentNotFoundError()
@@ -199,7 +203,18 @@ export default class Client {
      */
     doConnect(connection) {
         return new Promise((resolve, reject) => {
-            const socket = connect(connection.port, connection.host)
+            const path = connection.remote_socket
+            let options, socket
+
+            if (path.startsWith('tcp://')) {
+                options = path.replace('tcp://', '').split(':')
+                socket = connect(options[1], options[0])
+            } else if (path.startsWith('unix://')) {
+                options = path.replace('unix://', '')
+                socket = connect(options)
+            } else {
+                reject(new ConnectionNotWorkingError(`The remote socket '${path}' is not valid.`))
+            }
 
             socket
                 .on('connect', () => resolve(socket))
