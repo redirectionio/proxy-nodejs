@@ -14,10 +14,11 @@ export default class RedirectionIO {
         }
 
         app.use(async (req, res, next) => {
-            this.attachLogEvent(req, res)
-
             const request = new Request(req.get('Host'), req.originalUrl, req.get('User-Agent'), req.get('Referer'), req.protocol)
             const response = await this.handleRequest(request)
+
+            req.rio = { request: request, response: response }
+            this.attachLogEvent(req, res)
 
             if (!response) {
                 return next()
@@ -38,11 +39,12 @@ export default class RedirectionIO {
             this.connections = connections
         }
 
-        this.attachLogEvent(req, res)
-
         const scheme = req.headers['x-forwarded-proto'] ? req.headers['x-forwarded-proto'] : 'http'
         const request = new Request(req.headers['host'], req.url.split('?')[0], req.headers['user-agent'], scheme)
         const response = await this.handleRequest(request)
+
+        req.rio = { request: request, response: response }
+        this.attachLogEvent(req, res)
 
         if (!response) {
             return false
@@ -87,10 +89,8 @@ export default class RedirectionIO {
      */
     static attachLogEvent(req, res) {
         req.on('end', async () => {
-            const path = req.originalUrl ? req.originalUrl : req.url.split('?')[0]
-            const scheme = req.headers['x-forwarded-proto'] ? req.headers['x-forwarded-proto'] : 'http'
-            const request = new Request(req.headers['host'], path, req.headers['user-agent'], req.headers['referer'], scheme)
-            const response = new Response(res.statusCode)
+            const request = req.rio.request
+            const response = req.rio.response || new Response(res.statusCode)
             const client = new Client(this.connections, 10, false)
 
             try {

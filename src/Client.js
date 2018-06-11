@@ -79,9 +79,17 @@ export default class Client {
 
         response = JSON.parse(response)
 
-        return response.status_code === 410
-            ? new Response(410)
-            : new RedirectResponse(response.location, Number(response.status_code))
+        let ruleId = null
+
+        if (response.matched_rule && response.matched_rule.id) {
+            ruleId = response.matched_rule.id
+        }
+
+        if (410 === response.status_code) {
+            return new Response(410, ruleId)
+        }
+
+        return new RedirectResponse(response.location, Number(response.status_code), ruleId)
     }
 
     /**
@@ -97,6 +105,14 @@ export default class Client {
             'referer': request.referer,
             'scheme': request.scheme,
             'use_json': true,
+        }
+
+        if (response instanceof RedirectResponse) {
+            context.target = response.location
+        }
+
+        if (response.ruleId) {
+            context['rule_id'] = response.ruleId
         }
 
         try {
