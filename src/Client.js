@@ -4,7 +4,6 @@ import AgentNotFoundError from './Error/AgentNotFoundError'
 import BadConfigurationError from './Error/BadConfigurationError'
 import ConnectionNotWorkingError from './Error/ConnectionNotWorkingError'
 import NullLogger from './Logger/NullLogger'
-import RedirectResponse from './HttpMessage/RedirectResponse'
 import Response from './HttpMessage/Response'
 
 export default class Client {
@@ -85,11 +84,7 @@ export default class Client {
             ruleId = response.matched_rule.id
         }
 
-        if (410 === response.status_code) {
-            return new Response(410, ruleId)
-        }
-
-        return new RedirectResponse(response.location, Number(response.status_code), ruleId)
+        return new Response(Number(response.status_code), ruleId, response.location)
     }
 
     /**
@@ -107,7 +102,7 @@ export default class Client {
             'use_json': true,
         }
 
-        if (response instanceof RedirectResponse) {
+        if (response.location) {
             context.target = response.location
         }
 
