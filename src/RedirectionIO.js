@@ -24,9 +24,11 @@ export default class RedirectionIO {
                 return next()
             }
 
+            const query = req.url.split('?')[1] ? `?${req.url.split('?')[1]}` : '';
+
             response.statusCode === 410
                 ? res.status(410).send()
-                : res.redirect(response.statusCode, response.location)
+                : res.redirect(response.statusCode, `${response.location}${query}`)
         })
     }
 
@@ -50,9 +52,11 @@ export default class RedirectionIO {
             return false
         }
 
+        const query = req.url.split('?')[1] ? `?${req.url.split('?')[1]}` : '';
+
         response.statusCode === 410
             ? res.writeHead(410)
-            : res.writeHead(response.statusCode, { Location: response.location })
+            : res.writeHead(response.statusCode, { Location: `${response.location}${query}` })
 
         res.end()
         return true
