@@ -1,11 +1,10 @@
 # ChangeLog
 
-## Unreleased
+## 1.0.5
 
-...
+- Refresh packages
+- Fix query params with Node HTTP API server
 
-## 1.0.0 - 2018-03-02
-
-### Added
+## 1.0.4
 
 - Initial release

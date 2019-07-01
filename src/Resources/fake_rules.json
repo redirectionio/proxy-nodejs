@@ -3,5 +3,6 @@
     ["/baz", "/qux", 302],
     ["/quux", "/corge", 307],
     ["/uier", "/grault", 308],
-    ["/garply", "", 410]
+    ["/garply", "", 410],
+    ["/foo?with=some&query=params", "/bar?with=some&query=params", 301]
 ]

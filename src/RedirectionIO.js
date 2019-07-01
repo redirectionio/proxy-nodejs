@@ -40,7 +40,7 @@ export default class RedirectionIO {
         }
 
         const scheme = req.headers['x-forwarded-proto'] ? req.headers['x-forwarded-proto'] : 'http'
-        const request = new Request(req.headers['host'], req.url.split('?')[0], req.headers['user-agent'], scheme)
+        const request = new Request(req.headers['host'], req.url, req.headers['user-agent'], scheme)
         const response = await this.handleRequest(request)
 
         req.rio = { request: request, response: response }

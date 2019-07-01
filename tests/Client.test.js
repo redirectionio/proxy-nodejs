@@ -33,6 +33,16 @@ it('find redirect when rule exist', async () => {
     expect(response.location).toBe('/bar')
 })
 
+it('find redirect with query params when rule exist', async () => {
+    const request = createRequest({ path: '/foo?with=some&query=params' })
+    const response = await client.findRedirect(request)
+
+    expect(response).toBeInstanceOf(Response)
+    expect(response.statusCode).toBe(301)
+
+    expect(response.location).toBe('/bar?with=some&query=params')
+})
+
 it('send 410 response when rule exist', async () => {
     const request = createRequest({ path: '/garply' })
     const response = await client.findRedirect(request)
