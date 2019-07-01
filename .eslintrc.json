@@ -39,6 +39,8 @@
         "object-curly-spacing": [
             "error",
             "always"
-        ]
+        ],
+        "no-prototype-builtins": "off",
+        "require-atomic-updates": "off"
     }
 }

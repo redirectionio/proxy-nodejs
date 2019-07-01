@@ -34,18 +34,20 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "babel-runtime": "^6.26.0"
+    "@babel/runtime": "^7.4.5"
   },
   "devDependencies": {
+    "@babel/cli": "^7.4.4",
+    "@babel/core": "^7.4.5",
+    "@babel/plugin-proposal-class-properties": "^7.4.4",
+    "@babel/plugin-transform-runtime": "^7.4.4",
+    "@babel/preset-env": "^7.4.5",
     "@redirectionio/proxy": "file:./.",
-    "babel-cli": "^6.26.0",
-    "babel-eslint": "^8.2.1",
-    "babel-plugin-transform-runtime": "^6.23.0",
-    "babel-preset-env": "^1.6.1",
-    "babel-preset-stage-2": "^6.24.1",
-    "eslint": "^4.14.0",
-    "express": "^4.16.2",
-    "jest": "^22.0.4",
-    "pm2": "^2.9.3"
+    "babel-eslint": "^10.0.2",
+    "eslint": "^6.0.1",
+    "esm": "^3.2.25",
+    "express": "^4.17.1",
+    "jest": "^24.8.0",
+    "pm2": "^3.5.1"
   }
 }

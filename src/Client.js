@@ -130,11 +130,7 @@ export default class Client {
 
         let socket = null
 
-        try {
-            socket = await this.getConnection()
-        } catch (error) {
-            throw error
-        }
+        socket = await this.getConnection()
 
         let response = null
 

@@ -72,11 +72,7 @@ export default class RedirectionIO {
 
         let response = null
 
-        try {
-            response = await client.findRedirect(request)
-        } catch (error) {
-            throw error
-        }
+        response = await client.findRedirect(request)
 
         return response
     }
@@ -93,11 +89,7 @@ export default class RedirectionIO {
             const response = req.rio.response || new Response(res.statusCode)
             const client = new Client(this.connections, 10, false)
 
-            try {
-                await client.log(request, response)
-            } catch (error) {
-                throw error
-            }
+            await client.log(request, response)
         })
     }
 }

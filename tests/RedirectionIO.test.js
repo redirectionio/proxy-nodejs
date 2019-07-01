@@ -9,11 +9,17 @@ const config = { 'fake_agent': 'tcp://127.0.0.1:3200' }
 beforeAll(done => {
     const env = Object.create(process.env)
     env.RIO_PORT = 3200
-    agent = spawn('./node_modules/.bin/babel-node', [__dirname + '/../src/Resources/fake_agent.js'], { env: env, detached: true })
+    agent = spawn('node', ['-r', 'esm', __dirname + '/../src/Resources/fake_agent.js'], { env: env, detached: true })
     agent.stdout.on('data', () => done())
 })
 
-afterAll(() => process.kill(-agent.pid))
+afterAll(() => {
+    try {
+        process.kill(-agent.pid)
+    } catch (error) {
+        // Fake agent already stopped
+    }
+})
 
 it('find redirect in express server when rule exist', done => {
     // Mocks all needed functions/objects
@@ -135,7 +141,7 @@ it('find nothing in express server when agent is down', done => {
     try {
         process.kill(-agent.pid)
     } catch (error) {
-        // do nothing
+        // Fake agent already stopped
     }
 
     // Mocks all needed functions/objects

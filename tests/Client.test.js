@@ -3,7 +3,6 @@ import { spawn } from 'child_process'
 import AgentNotFoundError from '../src/Error/AgentNotFoundError'
 import BadConfigurationError from '../src/Error/BadConfigurationError'
 import Client from '../src/Client'
-import RedirectResponse from '../src/HttpMessage/RedirectResponse'
 import Request from '../src/HttpMessage/Request'
 import Response from '../src/HttpMessage/Response'
 
@@ -11,21 +10,25 @@ let agent = null
 let client = null
 
 beforeAll(done => {
-    agent = spawn('./node_modules/.bin/babel-node', [__dirname + '/../src/Resources/fake_agent.js'], { detached: true })
+    agent = spawn('node', ['-r', 'esm', __dirname + '/../src/Resources/fake_agent.js'], { detached: true })
     agent.stdout.on('data', () => done())
 
     client = new Client({ 'fake_agent': 'tcp://localhost:3100' })
 })
 
 afterAll(() => {
-    process.kill(-agent.pid)
+    try {
+        process.kill(-agent.pid)
+    } catch (error) {
+        // Fake agent already stopped
+    }
 })
 
 it('find redirect when rule exist', async () => {
     const request = createRequest({ path: '/foo' })
     const response = await client.findRedirect(request)
 
-    expect(response).toBeInstanceOf(RedirectResponse)
+    expect(response).toBeInstanceOf(Response)
     expect(response.statusCode).toBe(301)
     expect(response.location).toBe('/bar')
 })
@@ -42,13 +45,13 @@ it('find twice redirect when rule exist', async () => {
     const request = createRequest({ path: '/foo' })
     let response = await client.findRedirect(request)
 
-    expect(response).toBeInstanceOf(RedirectResponse)
+    expect(response).toBeInstanceOf(Response)
     expect(response.statusCode).toBe(301)
     expect(response.location).toBe('/bar')
 
     response = await client.findRedirect(request)
 
-    expect(response).toBeInstanceOf(RedirectResponse)
+    expect(response).toBeInstanceOf(Response)
     expect(response.statusCode).toBe(301)
     expect(response.location).toBe('/bar')
 })
@@ -107,7 +110,7 @@ it('find redirect in multiple hosts array', async () => {
     const request = createRequest({ path: '/foo' })
     const response = await customClient.findRedirect(request)
 
-    expect(response).toBeInstanceOf(RedirectResponse)
+    expect(response).toBeInstanceOf(Response)
     expect(response.statusCode).toBe(301)
     expect(response.location).toBe('/bar')
 })
@@ -119,7 +122,7 @@ it('find nothing when agent goes down', async () => {
         return new Promise(resolve => {
             const env = Object.create(process.env)
             env.RIO_PORT = 3101
-            customAgent = spawn('./node_modules/.bin/babel-node', [__dirname + '/../src/Resources/fake_agent.js'], { env: env, detached: true })
+            customAgent = spawn('node', ['-r', 'esm', __dirname + '/../src/Resources/fake_agent.js'], { env: env, detached: true })
             customAgent.stdout.on('data', () => resolve())
             customAgent.stderr.on('data', data => console.log(data.toString()))
         })
@@ -134,11 +137,15 @@ it('find nothing when agent goes down', async () => {
     const request = createRequest({ path: '/foo' })
     let response = await customClient.findRedirect(request)
 
-    expect(response).toBeInstanceOf(RedirectResponse)
+    expect(response).toBeInstanceOf(Response)
     expect(response.statusCode).toBe(301)
     expect(response.location).toBe('/bar')
 
-    process.kill(-customAgent.pid)
+    try {
+        process.kill(-customAgent.pid)
+    } catch (error) {
+        // Fake agent already stopped
+    }
 
     await expect(customClient.findRedirect(request)).resolves.toBeFalsy()
 })
