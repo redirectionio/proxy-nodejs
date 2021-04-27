@@ -1,5 +1,12 @@
 # redirection.io Proxy for Node.js
 
+**[DEPRECATED]**: This library is deprecated and will not be maintained anymore.
+It does not work with the [current version of the redirection.io
+agent](https://redirection.io/documentation/developer-documentation/installation-of-the-agent),
+but only with the legacy 1.x branch. We advise you to migrate and use [one of
+the recommended
+integrations](https://redirection.io/documentation/developer-documentation/available-integrations#recommended-integrations).
+
 The redirection.io Proxy for Node.js works in combination with [redirection.io](https://redirection.io).
 
 If you don't know what is redirection.io, take the time to make a quick tour on the website.
